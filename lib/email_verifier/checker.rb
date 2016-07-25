@@ -8,11 +8,11 @@ class EmailVerifier::Checker
   # Object returned isn't yet connected. It has internally a list of 
   # real mail servers got from MX dns lookup
   def initialize(address)
-    @email   = address
-    _, @domain  = address.split("@")
+    @email = address
+    _, @domain = address.split("@")
     @servers = list_mxs @domain
     raise EmailVerifier::NoMailServerException.new("No mail server for #{address}") if @servers.empty?
-    @smtp    = nil
+    @smtp = nil
 
     # this is because some mail servers won't give any info unless 
     # a real user asks for it:
@@ -25,7 +25,7 @@ class EmailVerifier::Checker
     res = Dnsruby::DNS.new
     mxs = []
     res.each_resource(domain, 'MX') do |rr|
-      mxs << { priority: rr.preference, address: rr.exchange.to_s }
+      mxs << { :priority => rr.preference, :address => rr.exchange.to_s }
     end
     mxs.sort_by { |mx| mx[:priority] }
   rescue Dnsruby::NXDomain
